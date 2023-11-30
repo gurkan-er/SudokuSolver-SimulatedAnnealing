@@ -1,7 +1,7 @@
 import java.util.List;
 
 public class Tools {
-    private static int K = 1;
+    private static final int K = 1;
     public static double probability(double oldScore, double newScore, double temperature) {
         if (newScore < oldScore) {
             return 1.0;

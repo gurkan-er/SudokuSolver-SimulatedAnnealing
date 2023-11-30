@@ -77,9 +77,11 @@ public class Sudoku {
         for(int row = 0; row < 9; row++) {
             for(int col = 0; col < 9; col++){
                 int value = sudoku.get(row)[col]; //sudoku[row][col];
+
                 if (isInRow(sudoku, row, col, value) ||
                         isInCol(sudoku, row, col, value) ||
-                        isInSubgrid(sudoku, row, col, value)){
+                        isInSubgrid(sudoku, row, col, value))
+                {
                     score++;
                 }
             }
@@ -118,7 +120,6 @@ public class Sudoku {
         return false;
     }
 
-    //TODO check blocks;
     public static boolean isInSubgrid(List<int[]> sudoku, int row, int col, int value) {
         int x0 = row / 3 * 3;
         int y0 = col / 3 * 3;
@@ -155,7 +156,20 @@ public class Sudoku {
         System.out.println(" -----------------------");
     }
 
+    // for the Second Approach
     public void swapCells(int row1, int col1, int row2, int col2) {
+        int temp = sudoku.get(row1)[col1];
+        sudoku.get(row1)[col1] = sudoku.get(row2)[col2];
+        sudoku.get(row2)[col2] = temp;
+    }
+
+    // for the First Approach
+    public void swapCells() {
+        int row1 = (int)(Math.random() * 9);
+        int col1 = (int)(Math.random() * 9);
+        int row2 = (int)(Math.random() * 9);
+        int col2 = (int)(Math.random() * 9);
+
         int temp = sudoku.get(row1)[col1];
         sudoku.get(row1)[col1] = sudoku.get(row2)[col2];
         sudoku.get(row2)[col2] = temp;

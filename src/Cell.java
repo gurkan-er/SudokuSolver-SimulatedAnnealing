@@ -1,10 +1,7 @@
-import java.util.Arrays;
-import java.util.List;
-
 public class Cell {
-    private int row;
-    private int col;
-    int value;
+    private final int row;
+    private final int col;
+    final int value;
 
     Cell(int row, int col, int value) {
         this.row = row;
@@ -13,7 +10,7 @@ public class Cell {
     }
 
     public static Cell[] getInitialCells() {
-        Cell[] initialCells = {
+        return new Cell[]{
                 new Cell(0, 2, 6),
                 new Cell(1, 1, 8),
                 new Cell(1, 4, 5),
@@ -39,13 +36,6 @@ public class Cell {
                 new Cell(8, 6, 5),
                 new Cell(8, 8, 2)
         };
-
-//        for(Cell cell: initialCells) {
-//            this.sudoku[cell.getRow()][cell.getCol()] = cell.value;
-//            filledCells.add(cell);
-//        }
-
-        return initialCells;
     }
 
     public int getRow() { return row; }

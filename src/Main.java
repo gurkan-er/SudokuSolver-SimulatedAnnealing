@@ -6,13 +6,45 @@ public class Main {
     public static void main(String[] args) {
         Sudoku currentSudoku = new Sudoku();
         currentSudoku.generateRandomSudoku();
+        currentSudoku.printSudoku();
+        System.out.println("Initial Fault Score: " + currentSudoku.lossFunctionScore() + "\n");
 
         Sudoku best = currentSudoku.duplicate();
         int bestScore = best.lossFunctionScore();
 
         int firstScore = currentSudoku.lossFunctionScore();
-        int iterationNUmber = 0;
+        int iterationNumber = 0;
 
+        // First Approach
+        while(temperature > Tmin && bestScore != 0){
+            for(int i = 0; i < numIterations; i++){
+                Sudoku neighbour = currentSudoku.duplicate();
+                neighbour.swapCells();
+
+                int newScore = neighbour.lossFunctionScore();
+                int oldScore = currentSudoku.lossFunctionScore();
+
+                if (Math.random() < Tools.probability(oldScore, newScore, temperature)){
+                    currentSudoku = neighbour.duplicate();
+                }
+
+                if (oldScore < bestScore){
+                    best = neighbour.duplicate();
+                    bestScore = newScore;
+                }
+
+                iterationNumber++;
+                System.out.print(iterationNumber % 1000 == 0
+                        ? "Iteration: " + iterationNumber + " - "
+                        + "Fault score: " + bestScore + "\n"
+                        : "");
+
+            }
+            temperature *= coolingRate;
+        }
+
+        // Second Approach
+        /*
         while(temperature > Tmin && bestScore != 0){
             for(int i = 0; i < numIterations; i++){
                 Sudoku neighbour = currentSudoku.duplicate();
@@ -25,45 +57,41 @@ public class Main {
 
                 int newScore = neighbour.lossFunctionScore();
                 int oldScore = currentSudoku.lossFunctionScore();
-                int delta = newScore - oldScore;
 
-                if (Math.random() < Tools.probability(oldScore, newScore, temperature)){
-                    currentSudoku = neighbour.duplicate();
-                }
-
-                if (oldScore < bestScore){
-                    best = neighbour.duplicate();
-                    bestScore = newScore;
-                }
-                /*
-                if(delta <= 0){
+                if(newScore - oldScore <= 0){
                     currentSudoku = neighbour.duplicate();
                     best = neighbour.duplicate();
                     bestScore = newScore;
 
                 } else {
-                    if(Math.random() >= Tools.probability(delta, temperature)){
+                    if(Math.random() >= Tools.probability(oldScore, newScore, temperature)){
                         neighbour.swapCells(row2, col2, row1, col1);
                     } else{
                         currentSudoku = neighbour.duplicate();
                     }
                 }
-                */
-                iterationNUmber++;
-                System.out.print(iterationNUmber % 1000 == 0
-                        ? "Iteration: " + iterationNUmber + " - "
+
+
+                iterationNumber++;
+                System.out.print(iterationNumber % 1000 == 0
+                        ? "Iteration: " + iterationNumber + " - "
                         + "Fault score: " + bestScore + "\n"
                         : "");
 
             }
             temperature *= coolingRate;
         }
+        */
 
-        best.printSudoku();
-        System.out.println("Temperature: " + temperature);
-        System.out.println("Fault Score of final Solution: " + best.lossFunctionScore());
-        System.out.println("Found in " + iterationNUmber + ". iteration ");
+        System.out.println("\nFault Score of final Solution: " + best.lossFunctionScore());
+        System.out.println("Found in " + iterationNumber + ". iteration ");
         System.out.println("Improvement(initial - final): " + (firstScore - best.lossFunctionScore()));
-        Tools.uncorrectCells(best);
+
+        System.out.println("\nFinal Solution:");
+        best.printSudoku();
+//        System.out.println("Temperature: " + temperature); // silinebilir
+//        Tools.uncorrectCells(best); // silinebilir
+
+
     }
 }
