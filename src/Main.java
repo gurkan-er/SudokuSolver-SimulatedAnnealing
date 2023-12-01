@@ -1,97 +1,43 @@
 public class Main {
-    static double coolingRate = 0.95;
-    static double temperature = 1;
-    static double Tmin = 0.0001;
-    static int numIterations = 1000;
     public static void main(String[] args) {
-        Sudoku currentSudoku = new Sudoku();
-        currentSudoku.generateRandomSudoku();
-        currentSudoku.printSudoku();
-        System.out.println("Initial Fault Score: " + currentSudoku.lossFunctionScore() + "\n");
+        // create sudoku with given cells
+        Sudoku initialSudoku = new Sudoku();
 
-        Sudoku best = currentSudoku.duplicate();
-        int bestScore = best.lossFunctionScore();
+        // fill initialSudoku's empty cells with random numbers
+        initialSudoku.fillSudokuWithRandomVariables();
+        initialSudoku.printSudoku();
 
-        int firstScore = currentSudoku.lossFunctionScore();
-        int iterationNumber = 0;
+        int numberOfError_initialSudoku = initialSudoku.lossFunctionScore();
+        System.out.println("Initial Fault Score: " + numberOfError_initialSudoku + "\n");
 
-        // First Approach
-        while(temperature > Tmin && bestScore != 0){
-            for(int i = 0; i < numIterations; i++){
-                Sudoku neighbour = currentSudoku.duplicate();
-                neighbour.swapCells();
+        // create simulated annealing solver
+        SimulatedAnnealing solver = new SimulatedAnnealing(initialSudoku,
+                1, 0.0001,
+                0.90, 1000);
 
-                int newScore = neighbour.lossFunctionScore();
-                int oldScore = currentSudoku.lossFunctionScore();
-
-                if (Math.random() < Tools.probability(oldScore, newScore, temperature)){
-                    currentSudoku = neighbour.duplicate();
-                }
-
-                if (oldScore < bestScore){
-                    best = neighbour.duplicate();
-                    bestScore = newScore;
-                }
-
-                iterationNumber++;
-                System.out.print(iterationNumber % 1000 == 0
-                        ? "Iteration: " + iterationNumber + " - "
-                        + "Fault score: " + bestScore + "\n"
-                        : "");
-
-            }
-            temperature *= coolingRate;
-        }
-
-        // Second Approach
         /*
-        while(temperature > Tmin && bestScore != 0){
-            for(int i = 0; i < numIterations; i++){
-                Sudoku neighbour = currentSudoku.duplicate();
-
-                int row1 = (int)(Math.random() * 9);
-                int col1 = (int)(Math.random() * 9);
-                int row2 = (int)(Math.random() * 9);
-                int col2 = (int)(Math.random() * 9);
-                neighbour.swapCells(row1, col1, row2, col2);
-
-                int newScore = neighbour.lossFunctionScore();
-                int oldScore = currentSudoku.lossFunctionScore();
-
-                if(newScore - oldScore <= 0){
-                    currentSudoku = neighbour.duplicate();
-                    best = neighbour.duplicate();
-                    bestScore = newScore;
-
-                } else {
-                    if(Math.random() >= Tools.probability(oldScore, newScore, temperature)){
-                        neighbour.swapCells(row2, col2, row1, col1);
-                    } else{
-                        currentSudoku = neighbour.duplicate();
-                    }
-                }
-
-
-                iterationNumber++;
-                System.out.print(iterationNumber % 1000 == 0
-                        ? "Iteration: " + iterationNumber + " - "
-                        + "Fault score: " + bestScore + "\n"
-                        : "");
-
-            }
-            temperature *= coolingRate;
-        }
+         both approaches are simulated annealing,
+         but they slightly differ in their implementation
+         First Approach's more understandable and more compact
         */
+        solver.run_FirstApproach();
+//        solver.run_SecondApproach();
 
-        System.out.println("\nFault Score of final Solution: " + best.lossFunctionScore());
-        System.out.println("Found in " + iterationNumber + ". iteration ");
-        System.out.println("Improvement(initial - final): " + (firstScore - best.lossFunctionScore()));
+        print(solver);
+    }
+
+    public static void print(SimulatedAnnealing solver){
+        Sudoku bestSudoku = solver.getBestSudoku();
+        int numberOfError_bestSudoku = solver.getNumberOfError_bestSudoku();
+
+        System.out.println("\nFault Score of final Solution: " + numberOfError_bestSudoku);
+        System.out.println("Found in " + solver.getIterationNumber() + ". iteration ");
 
         System.out.println("\nFinal Solution:");
-        best.printSudoku();
-//        System.out.println("Temperature: " + temperature); // silinebilir
-//        Tools.uncorrectCells(best); // silinebilir
+        bestSudoku.printSudoku();
 
-
+        if (numberOfError_bestSudoku != 0){
+            Tools.incorrectCells(bestSudoku);
+        }
     }
 }

@@ -1,7 +1,7 @@
 public class Cell {
     private final int row;
     private final int col;
-    final int value;
+    private final int value;
 
     Cell(int row, int col, int value) {
         this.row = row;
@@ -40,6 +40,7 @@ public class Cell {
 
     public int getRow() { return row; }
     public int getCol() { return col; }
+    public int getValue() { return value; }
 
     @Override
     public String toString() {
