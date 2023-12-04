@@ -17,7 +17,7 @@ public class Main {
 
         /*
          both approaches are simulated annealing,
-         but they slightly differ in their implementation
+         but they've slightly different implementation
          First Approach's more understandable and more compact
         */
         solver.run_FirstApproach();
