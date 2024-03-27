@@ -1,3 +1,4 @@
+# Sample usage
 ```
 Initial Fault Score: 64  
  -----------------------
