@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="sudoku_SimulatedAnnealing:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/sudoku_SimulatedAnnealing_jar</output-path>
-    <root id="archive" name="sudoku_SimulatedAnnealing.jar">
-      <element id="module-output" name="sudoku_SimulatedAnnealing" />
-    </root>
-  </artifact>
-</component>
