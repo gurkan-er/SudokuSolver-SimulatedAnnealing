@@ -7,13 +7,13 @@ public class Sudoku {
 
     private List<int[]> sudoku = new ArrayList<>();
 
-    public Sudoku(){
+    public Sudoku() {
         // sudoku objects created with given cells
         Cell[] givenCells = Cell.getInitialCells();
         implementGivenCellsToSudoku(givenCells);
     }
 
-    public Sudoku(Sudoku other){
+    public Sudoku(Sudoku other) {
         /*
          when we need to duplicate a sudoku object
          this constructor is used
@@ -23,11 +23,57 @@ public class Sudoku {
         */
         this.sudoku = new ArrayList<>();
 
-        for(int[] row: other.sudoku){
+        for (int[] row : other.sudoku) {
             this.sudoku.add(Arrays.copyOf(row, row.length));
         }
     }
-    public Sudoku duplicate(){
+
+    /*
+     If some cells still empty, we'll specify them.
+     So isInRow, isInCol and isInSubgrid must be static,
+     because we'll reach them without creating a sudoku object.
+    */
+    public static boolean isInRow(List<int[]> sudoku, int row, int col, int value) {
+        for (int i = 0; i < 9; i++) {
+            if (i == row) {
+                continue;
+            }
+            if (sudoku.get(i)[col] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInCol(List<int[]> sudoku, int row, int col, int value) {
+        for (int i = 0; i < 9; i++) {
+            if (i == col) {
+                continue;
+            }
+            if (sudoku.get(row)[i] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInSubgrid(List<int[]> sudoku, int row, int col, int value) {
+        int x0 = row / 3 * 3;
+        int y0 = col / 3 * 3;
+        for (int i = x0; i < x0 + 3; i++) {
+            for (int j = y0; j < y0 + 3; j++) {
+                if (i == row && j == col) {
+                    continue;
+                }
+                if (sudoku.get(i)[j] == value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Sudoku duplicate() {
         // when we need to duplicate a sudoku object (neighbours)
         // this method is used
         return new Sudoku(this);
@@ -42,22 +88,22 @@ public class Sudoku {
 
         // created 9x9 zero matrix
         int[][] temporarySudoku = new int[9][9];
-        
+
         // assign given cells to the temporary sudoku matrix
-        for(Cell cell: cells) {
+        for (Cell cell : cells) {
             temporarySudoku[cell.getRow()][cell.getCol()] = cell.getValue();
         }
-        
+
         // copy the temporary sudoku matrix to the sudoku object
-        for(int i= 0; i < 9; i++){
+        for (int i = 0; i < 9; i++) {
             this.sudoku.add(Arrays.copyOf(temporarySudoku[i], temporarySudoku[i].length));
         }
     }
 
     public void fillSudokuWithRandomVariables() {
         // assign random values to sudoku object's empty cells
-        for(int row = 0; row < 9; row++) {
-            for(int col = 0; col < 9; col++) {
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
                 /*
                  if the cell is not empty, then continue
                  because we don't want to change the given cells
@@ -79,13 +125,13 @@ public class Sudoku {
         }
     }
 
-    public int fillRowRandomly(List<int[]> sudoku, int row, int col){
+    public int fillRowRandomly(List<int[]> sudoku, int row, int col) {
         Random random = new Random();
         int attempts = 0;
-        while(attempts < 100){
+        while (attempts < 100) {
             int value = random.nextInt(9) + 1;
 
-            if(!isInSubgrid(sudoku, row, col, value)){
+            if (!isInSubgrid(sudoku, row, col, value)) {
                 return value;
             }
             attempts++;
@@ -106,65 +152,19 @@ public class Sudoku {
         // the cell will count as an error if it's in the same row, col or subgrid
         int score = 0;
 
-        for(int row = 0; row < 9; row++) {
-            for(int col = 0; col < 9; col++){
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
                 int value = sudoku.get(row)[col];
 
                 if (isInRow(sudoku, row, col, value) ||
                         isInCol(sudoku, row, col, value) ||
-                        isInSubgrid(sudoku, row, col, value))
-                {
+                        isInSubgrid(sudoku, row, col, value)) {
                     score++;
                 }
             }
         }
 
         return score;
-    }
-
-    /*
-     If some cells still empty, we'll specify them.
-     So isInRow, isInCol and isInSubgrid must be static,
-     because we'll reach them without creating a sudoku object.
-    */
-    public static boolean isInRow(List<int[]> sudoku, int row, int col, int value){
-        for(int i = 0; i < 9; i++){
-            if(i == row){
-                continue;
-            }
-            if(sudoku.get(i)[col] == value){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isInCol(List<int[]> sudoku, int row, int col, int value){
-        for(int i = 0; i < 9; i++){
-            if(i == col){
-                continue;
-            }
-            if(sudoku.get(row)[i] == value){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isInSubgrid(List<int[]> sudoku, int row, int col, int value) {
-        int x0 = row / 3 * 3;
-        int y0 = col / 3 * 3;
-        for(int i = x0; i < x0 + 3; i++){
-            for(int j = y0; j < y0 + 3; j++){
-                if(i == row && j == col){
-                    continue;
-                }
-                if(sudoku.get(i)[j] == value){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public void printSudoku() {
@@ -184,16 +184,16 @@ public class Sudoku {
             }
             System.out.println("|");
         }
-        System.out.println(" -----------------------");
+        System.out.println(" -----------------------\n\n");
     }
 
     // for simplicity, First Approach isn't include random row and col
     // for the swap cells.
     public void swapCells() {
-        int row1 = (int)(Math.random() * 9);
-        int col1 = (int)(Math.random() * 9);
-        int row2 = (int)(Math.random() * 9);
-        int col2 = (int)(Math.random() * 9);
+        int row1 = (int) (Math.random() * 9);
+        int col1 = (int) (Math.random() * 9);
+        int row2 = (int) (Math.random() * 9);
+        int col2 = (int) (Math.random() * 9);
 
         int temp = sudoku.get(row1)[col1];
         sudoku.get(row1)[col1] = sudoku.get(row2)[col2];
@@ -206,5 +206,8 @@ public class Sudoku {
         sudoku.get(row1)[col1] = sudoku.get(row2)[col2];
         sudoku.get(row2)[col2] = temp;
     }
-    public List<int[]> getSudoku() { return sudoku; }
+
+    public List<int[]> getSudoku() {
+        return sudoku;
+    }
 }

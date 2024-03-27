@@ -1,17 +1,15 @@
 public class Main {
+    // create sudoku with given cells
+    private static final Sudoku givenSudoku = new Sudoku();
+
     public static void main(String[] args) {
-        // create sudoku with given cells
-        Sudoku initialSudoku = new Sudoku();
 
-        // fill initialSudoku's empty cells with random numbers
-        initialSudoku.fillSudokuWithRandomVariables();
-        initialSudoku.printSudoku();
-
-        int numberOfError_initialSudoku = initialSudoku.lossFunctionScore();
-        System.out.println("Initial Fault Score: " + numberOfError_initialSudoku + "\n");
+        // fill givenSudoku's empty cells with random numbers
+        givenSudoku.fillSudokuWithRandomVariables();
+        printGivenSudoku();
 
         // create simulated annealing solver
-        SimulatedAnnealing solver = new SimulatedAnnealing(initialSudoku,
+        SimulatedAnnealing solver = new SimulatedAnnealing(givenSudoku,
                 1, 0.0001,
                 0.90, 1000);
 
@@ -20,13 +18,29 @@ public class Main {
          but they've slightly different implementation
          First Approach's more understandable and more compact
         */
-        solver.run_FirstApproach();
-//        solver.run_SecondApproach();
-
-        print(solver);
+        run(solver);
+        printSolvedSudoku(solver);
     }
 
-    public static void print(SimulatedAnnealing solver){
+    public static void run(SimulatedAnnealing solver) {
+        long start = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            solver.run_FirstApproach();
+//            solver.run_SecondApproach();
+        }
+        long finish = System.nanoTime();
+
+        System.out.println("Elapsed time: " + (finish - start) / 1000000 + " ms");
+    }
+
+    public static void printGivenSudoku() {
+        int numberOfError_givenSudoku = givenSudoku.lossFunctionScore();
+        System.out.println("Initial Fault Score: " + numberOfError_givenSudoku);
+
+        givenSudoku.printSudoku();
+    }
+
+    public static void printSolvedSudoku(SimulatedAnnealing solver) {
         Sudoku bestSudoku = solver.getBestSudoku();
         int numberOfError_bestSudoku = solver.getNumberOfError_bestSudoku();
 
@@ -36,7 +50,7 @@ public class Main {
         System.out.println("\nFinal Solution:");
         bestSudoku.printSudoku();
 
-        if (numberOfError_bestSudoku != 0){
+        if (numberOfError_bestSudoku != 0) {
             Tools.incorrectCells(bestSudoku);
         }
     }
